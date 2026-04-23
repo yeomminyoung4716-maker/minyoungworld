@@ -4,10 +4,10 @@
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>벽돌곱창 순위 추적</title>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/recharts/2.5.0/Recharts.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.21.4/babel.min.js"></script>
+<script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+<script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+<script src="https://unpkg.com/recharts@2.5.0/umd/Recharts.js"></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;600;700;800;900&display=swap" rel="stylesheet"/>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
@@ -23,7 +23,7 @@ button{cursor:pointer;font-family:'Noto Sans KR',sans-serif}
 </head>
 <body>
 <div id="root"></div>
-<script type="text/babel">
+<script type="text/babel" data-presets="react">
 const {useState,useEffect,useCallback}=React;
 const {LineChart,Line,XAxis,YAxis,CartesianGrid,Tooltip,ResponsiveContainer,Legend}=Recharts;
 
@@ -262,7 +262,7 @@ function App(){
 
   return(
     <div style={{minHeight:"100vh",background:"#0A0A0A",color:"#F5F0E8",paddingBottom:60}}>
-      {notification&&<div style={{position:"fixed",top:20,right:20,zIndex:9999,background:notification.type==="success"?"#FF6B35":"#E71D36",color:"#fff",padding:"12px 24px",borderRadius:8,fontWeight:700,fontSize:14,boxShadow:"0 4px 20px rgba(255,107,53,0.4)"}}>{notification.msg}</div>}
+      {notification&&<div style={{position:"fixed",top:20,right:20,zIndex:9999,background:notification.type==="success"?"#FF6B35":"#E71D36",color:"#fff",padding:"12px 24px",borderRadius:8,fontWeight:700,fontSize:14}}>{notification.msg}</div>}
       {saving&&<div style={{position:"fixed",bottom:20,right:20,zIndex:9998,background:"#161616",border:"1px solid #333",color:"#888",padding:"8px 16px",borderRadius:8,fontSize:12}}>💾 저장 중...</div>}
 
       <div style={{background:"linear-gradient(135deg,#1A0A00,#0A0A0A)",borderBottom:"2px solid #FF6B35",padding:"20px 24px",display:"flex",alignItems:"center",justifyContent:"space-between",flexWrap:"wrap",gap:12}}>
@@ -285,7 +285,6 @@ function App(){
       </div>
 
       <div style={{padding:24}}>
-
         {activeTab==="dashboard"&&(
           <div>
             <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:20,flexWrap:"wrap",gap:10}}>
@@ -344,13 +343,8 @@ function App(){
                 </div>
               ))}
             </div>
-            {trendFilter!=="all"&&(
-              <div style={{display:"flex",alignItems:"center",gap:10,marginBottom:16}}>
-                <button onClick={()=>setTrendFilter("all")} style={{background:"#222",border:"none",color:"#888",padding:"4px 10px",borderRadius:20,fontSize:11}}>전체 보기</button>
-              </div>
-            )}
             <div style={{display:"flex",flexDirection:"column",gap:10}}>
-              {filteredTrendList.map((b,idx)=>{
+              {filteredTrendList.map((b)=>{
                 const overallCfg={up:{label:"상승",color:"#2EC4B6",bg:"rgba(46,196,182,0.12)",icon:"📈"},same:{label:"유지",color:"#888",bg:"rgba(255,255,255,0.05)",icon:"➡️"},down:{label:"하락",color:"#E71D36",bg:"rgba(231,29,54,0.12)",icon:"📉"},nodata:{label:"데이터없음",color:"#444",bg:"rgba(255,255,255,0.02)",icon:"❓"}}[b.overall];
                 return(
                   <div key={b.id} style={{background:"#161616",border:`1px solid ${b.overall==="nodata"?"#1E1E1E":overallCfg.color+"44"}`,borderRadius:12,overflow:"hidden",borderLeft:`4px solid ${COLORS[branches.indexOf(b)%COLORS.length]}`}}>
@@ -359,10 +353,7 @@ function App(){
                         <span style={{fontSize:18}}>{overallCfg.icon}</span>
                         <span style={{fontSize:15,fontWeight:800}}>{b.name}</span>
                       </div>
-                      <div style={{display:"flex",alignItems:"center",gap:8}}>
-                        <span style={{fontSize:12,fontWeight:700,color:overallCfg.color,border:`1px solid ${overallCfg.color}55`,padding:"3px 12px",borderRadius:20}}>{overallCfg.label}</span>
-                        <button onClick={()=>{setSelectedBranch(b);setActiveTab("chart");}} style={{background:"transparent",border:"1px solid #333",color:"#666",padding:"3px 10px",borderRadius:20,fontSize:11}}>차트 보기</button>
-                      </div>
+                      <span style={{fontSize:12,fontWeight:700,color:overallCfg.color,border:`1px solid ${overallCfg.color}55`,padding:"3px 12px",borderRadius:20}}>{overallCfg.label}</span>
                     </div>
                     <div style={{display:"flex",flexDirection:"column"}}>
                       {b.kwDetails.map(({kw,trend,current,ref,diff})=>{
@@ -377,7 +368,6 @@ function App(){
                                 <span style={{fontSize:10,color:"#333"}}>→</span>
                                 <span style={{fontSize:13,fontWeight:800,color:"#F5F0E8"}}>{current!=null?`${current}위`:"-"}</span>
                                 {diff!=null&&diff!==0&&<span style={{fontSize:11,fontWeight:700,color:kwCfg.color,background:kwCfg.color+"22",padding:"1px 7px",borderRadius:20}}>{diff>0?`+${diff}`:`${diff}`}</span>}
-                                {diff===0&&<span style={{fontSize:11,color:"#555"}}>변동없음</span>}
                               </div>
                             ):<span style={{fontSize:11,color:"#444"}}>1주일 전 데이터 없음</span>}
                           </div>
@@ -403,12 +393,6 @@ function App(){
                 </select>
                 <button onClick={saveRanks} style={{background:"#FF6B35",border:"none",color:"#fff",padding:"9px 20px",borderRadius:8,fontSize:14,fontWeight:800}}>💾 저장</button>
               </div>
-            </div>
-            <div style={{display:"flex",gap:8,marginBottom:12,padding:"8px 16px",background:"#161616",borderRadius:8,fontSize:11,color:"#555",alignItems:"center"}}>
-              <span style={{flex:1}}>키워드</span>
-              <span style={{width:60,textAlign:"center",color:"#F5F0E8"}}>현재순위</span>
-              <span style={{width:60,textAlign:"center",color:"#2EC4B6"}}>최고순위</span>
-              <span style={{width:60,textAlign:"center",color:"#E71D36"}}>최저순위</span>
             </div>
             <div style={{display:"flex",flexDirection:"column",gap:16}}>
               {inputBranches.map((b)=>(
@@ -440,22 +424,6 @@ function App(){
                   })}
                 </div>
               ))}
-            </div>
-            <div style={{marginTop:32}}>
-              <h3 style={{margin:"0 0 12px",fontSize:15,fontWeight:800,color:"#888"}}>최근 입력 내역</h3>
-              <div style={{display:"flex",flexDirection:"column",gap:4}}>
-                {branches.flatMap(b=>(b.keywords||[]).flatMap(kw=>((rankData[b.id]||{})[kw]||[]).map(r=>({...r,branchName:b.name,branchId:b.id,kw})))).sort((a,b)=>new Date(b.date)-new Date(a.date)).slice(0,30).map((r,i)=>(
-                  <div key={i} style={{display:"flex",alignItems:"center",gap:10,padding:"8px 14px",background:"#161616",borderRadius:8,fontSize:12,flexWrap:"wrap"}}>
-                    <span style={{color:"#555",minWidth:80}}>{r.date}</span>
-                    <span style={{fontWeight:700,minWidth:110}}>{r.branchName}</span>
-                    <span style={{color:"#888",flex:1,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{r.kw}</span>
-                    <span style={{color:"#F5F0E8"}}>현재 <b>{r.current??"-"}위</b></span>
-                    <span style={{color:"#2EC4B6"}}>최고 <b>{r.best??"-"}위</b></span>
-                    <span style={{color:"#E71D36"}}>최저 <b>{r.worst??"-"}위</b></span>
-                    <button onClick={()=>deleteRecord(r.branchId,r.kw,r.date)} style={{background:"transparent",border:"none",color:"#333",fontSize:14}}>✕</button>
-                  </div>
-                ))}
-              </div>
             </div>
           </div>
         )}
@@ -516,7 +484,6 @@ function App(){
                             <button onClick={()=>deleteBranch(b.id)} style={{background:"#1A0A0A",border:"1px solid #E71D3630",color:"#E71D36",padding:"6px 12px",borderRadius:8,fontSize:12}}>🗑️</button>
                           </div>
                         </div>
-                        {b.url&&<a href={b.url} target="_blank" rel="noreferrer" style={{fontSize:11,color:"#FF6B35",textDecoration:"none",display:"block",marginBottom:8}}>🔗 {b.url}</a>}
                         <div style={{display:"flex",flexWrap:"wrap",gap:4}}>
                           {(b.keywords||[]).map(kw=>{
                             const s=getKeywordStats(b.id,kw);
@@ -534,10 +501,6 @@ function App(){
 
         {activeTab==="chart"&&(
           <div>
-            <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:20,flexWrap:"wrap",gap:10}}>
-              <h2 style={{margin:0,fontSize:20,fontWeight:900}}>순위 추이 차트</h2>
-              <div style={{fontSize:12,color:"#555"}}>※ 숫자가 낮을수록 상위 노출</div>
-            </div>
             <div style={{marginBottom:20}}>
               <select value={selectedBranch?.id||""} onChange={e=>{const b=branches.find(x=>x.id===parseInt(e.target.value))||null;setSelectedBranch(b);setSelectedKeyword({});}} style={{background:"#161616",border:"1px solid #333",color:"#F5F0E8",padding:"9px 14px",borderRadius:8,fontSize:13,width:"100%",maxWidth:400,outline:"none"}}>
                 <option value="">지점 선택...</option>
@@ -553,8 +516,6 @@ function App(){
                 kws.forEach(kw=>{
                   const rec=((rankData[b.id]||{})[kw]||[]).find(r=>r.date===date);
                   entry[`${kwKey(kw)}_cur`]=rec?.current??null;
-                  entry[`${kwKey(kw)}_best`]=rec?.best??null;
-                  entry[`${kwKey(kw)}_worst`]=rec?.worst??null;
                 });
                 return entry;
               });
@@ -562,63 +523,33 @@ function App(){
                 <div>
                   <div style={{display:"flex",flexWrap:"wrap",gap:6,marginBottom:16}}>
                     {kws.map((kw,i)=>{
-                      const active=selectedKeyword[kw]!==false;const c=COLORS[i%COLORS.length];const s=getKeywordStats(b.id,kw);
-                      return(<button key={kw} onClick={()=>setSelectedKeyword(prev=>({...prev,[kw]:!active}))} style={{background:active?c+"22":"#111",border:`1px solid ${active?c:"#333"}`,color:active?c:"#555",padding:"5px 12px",borderRadius:20,fontSize:12,fontWeight:600}}>{kw}{s.current!=null?<span style={{marginLeft:4,opacity:0.8}}>{s.current}위</span>:null}</button>);
+                      const active=selectedKeyword[kw]!==false;const c=COLORS[i%COLORS.length];
+                      return(<button key={kw} onClick={()=>setSelectedKeyword(prev=>({...prev,[kw]:!active}))} style={{background:active?c+"22":"#111",border:`1px solid ${active?c:"#333"}`,color:active?c:"#555",padding:"5px 12px",borderRadius:20,fontSize:12,fontWeight:600}}>{kw}</button>);
                     })}
                   </div>
                   {chartData.length===0?(
-                    <div style={{textAlign:"center",padding:"60px",color:"#444",background:"#161616",borderRadius:12}}>
-                      <div style={{fontSize:48,marginBottom:12}}>📊</div>
-                      <div style={{fontSize:15}}>아직 이 지점의 데이터가 없습니다</div>
-                    </div>
+                    <div style={{textAlign:"center",padding:"60px",color:"#444",background:"#161616",borderRadius:12}}>데이터 없음</div>
                   ):(
-                    <>
-                      <div style={{background:"#161616",border:"1px solid #2A2A2A",borderRadius:12,padding:20,marginBottom:16}}>
-                        <ResponsiveContainer width="100%" height={400}>
-                          <LineChart data={chartData} margin={{top:5,right:20,left:0,bottom:5}}>
-                            <CartesianGrid strokeDasharray="3 3" stroke="#1E1E1E"/>
-                            <XAxis dataKey="date" stroke="#444" tick={{fontSize:11,fill:"#666"}}/>
-                            <YAxis reversed stroke="#444" tick={{fontSize:11,fill:"#666"}} domain={["dataMin - 1","dataMax + 1"]}/>
-                            <Tooltip contentStyle={{background:"#1A1A1A",border:"1px solid #333",borderRadius:8}} labelStyle={{color:"#888",fontSize:12}} itemStyle={{fontSize:12}} formatter={(v,n)=>v!=null?[`${v}위`,n]:["-",n]}/>
-                            <Legend wrapperStyle={{fontSize:10}}/>
-                            {activeKws.map((kw)=>{
-                              const c=COLORS[kws.indexOf(kw)%COLORS.length];const k=kwKey(kw);
-                              return[
-                                <Line key={`${k}_cur`} type="monotone" dataKey={`${k}_cur`} name={`${kw} 현재`} stroke={c} strokeWidth={2} dot={{r:3}} connectNulls={false}/>,
-                                <Line key={`${k}_best`} type="monotone" dataKey={`${k}_best`} name={`${kw} 최고`} stroke={c} strokeWidth={1.5} strokeDasharray="6 3" dot={false} connectNulls={false}/>,
-                                <Line key={`${k}_worst`} type="monotone" dataKey={`${k}_worst`} name={`${kw} 최저`} stroke={c} strokeWidth={1.5} strokeDasharray="2 3" dot={false} connectNulls={false}/>,
-                              ];
-                            })}
-                          </LineChart>
-                        </ResponsiveContainer>
-                      </div>
-                      <div style={{background:"#161616",border:"1px solid #2A2A2A",borderRadius:12,overflow:"hidden"}}>
-                        <table style={{width:"100%",borderCollapse:"collapse",fontSize:12}}>
-                          <thead><tr style={{background:"#111"}}>{["키워드","기록수","현재순위","최고순위","최저순위","변동"].map(h=><th key={h} style={{padding:"10px 14px",textAlign:"left",color:"#666",fontWeight:600,borderBottom:"1px solid #222"}}>{h}</th>)}</tr></thead>
-                          <tbody>
-                            {kws.map(kw=>{
-                              const s=getKeywordStats(b.id,kw);const diff=(s.current!=null&&s.prevCurrent!=null)?s.prevCurrent-s.current:null;
-                              return(<tr key={kw} style={{borderBottom:"1px solid #1A1A1A"}}>
-                                <td style={{padding:"9px 14px",fontWeight:600}}>{kw}</td>
-                                <td style={{padding:"9px 14px",color:"#666"}}>{s.records.length}회</td>
-                                <td style={{padding:"9px 14px",fontWeight:800}}>{s.current!=null?`${s.current}위`:"-"}</td>
-                                <td style={{padding:"9px 14px",fontWeight:800,color:"#2EC4B6"}}>{s.best!=null?`${s.best}위`:"-"}</td>
-                                <td style={{padding:"9px 14px",fontWeight:800,color:"#E71D36"}}>{s.worst!=null?`${s.worst}위`:"-"}</td>
-                                <td style={{padding:"9px 14px"}}><TrendBadge diff={diff}/></td>
-                              </tr>);
-                            })}
-                          </tbody>
-                        </table>
-                      </div>
-                    </>
+                    <div style={{background:"#161616",border:"1px solid #2A2A2A",borderRadius:12,padding:20}}>
+                      <ResponsiveContainer width="100%" height={400}>
+                        <LineChart data={chartData}>
+                          <CartesianGrid strokeDasharray="3 3" stroke="#1E1E1E"/>
+                          <XAxis dataKey="date" stroke="#444" tick={{fontSize:11,fill:"#666"}}/>
+                          <YAxis reversed stroke="#444" tick={{fontSize:11,fill:"#666"}}/>
+                          <Tooltip contentStyle={{background:"#1A1A1A",border:"1px solid #333",borderRadius:8}} formatter={(v)=>v!=null?`${v}위`:"-"}/>
+                          <Legend/>
+                          {activeKws.map((kw)=>{
+                            const c=COLORS[kws.indexOf(kw)%COLORS.length];const k=kwKey(kw);
+                            return <Line key={k} type="monotone" dataKey={`${k}_cur`} name={kw} stroke={c} strokeWidth={2} dot={{r:3}} connectNulls={false}/>;
+                          })}
+                        </LineChart>
+                      </ResponsiveContainer>
+                    </div>
                   )}
                 </div>
               );
             })():(
-              <div style={{textAlign:"center",padding:"80px 20px",color:"#444",background:"#161616",borderRadius:12}}>
-                <div style={{fontSize:48,marginBottom:12}}>📈</div>
-                <div style={{fontSize:15}}>위에서 지점을 선택하면 키워드별 순위 추이를 확인할 수 있습니다</div>
-              </div>
+              <div style={{textAlign:"center",padding:"80px 20px",color:"#444",background:"#161616",borderRadius:12}}>지점을 선택하세요</div>
             )}
           </div>
         )}
